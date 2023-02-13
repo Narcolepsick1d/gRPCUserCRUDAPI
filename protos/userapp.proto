@@ -1,0 +1,38 @@
+syntax = "proto3";
+package userapp;
+option go_package = "/protos";
+
+
+message User {
+	int64 id = 1;
+	string name = 2;
+	int64 age = 3;
+	string phone= 4;
+}
+
+message CreateUserRequest {
+	User user = 1;
+}
+message CreateUserResponse {
+	User user = 1;
+}
+message ReadUserRequest{
+	int64 id =1;
+}
+message ReadUserResponse{
+	User user =1;
+}
+message ReadUsersRequest{
+
+}
+message ReadUsersResponse{
+	repeated User user =1;
+}
+
+
+
+service UserService {
+	rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {}
+	rpc GetUser(ReadUserRequest) returns (ReadUserResponse) {}
+	rpc GetUsers(ReadUserRequest) returns (ReadUsersResponse) {}
+}
