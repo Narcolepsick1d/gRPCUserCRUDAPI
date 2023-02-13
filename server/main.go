@@ -20,7 +20,7 @@ var DB *sql.DB
 var err error
 
 type User struct {
-	ID    int64
+	ID    int64 `gorm:"primarykey"`
 	name  string
 	age   int64
 	phone string
@@ -40,7 +40,6 @@ func DatabaseConnection() {
 		password,
 	)
 	DB, err = sql.Open("postgres", dsn)
-
 	if err != nil {
 		log.Fatal("Error connecting to the database...", err)
 	}
@@ -60,14 +59,14 @@ func (*server) CreateUser(ctx context.Context, req *pb.CreateUserRequest) (*pb.C
 	user := req.GetUser()
 
 	data := User{
-		ID:    user.GetId(),
+
 		name:  user.GetName(),
 		age:   user.GetAge(),
 		phone: user.GetPhone(),
 	}
 
 	_, err := DB.Exec("insert into users (name, age, phone) values ($1,$2,$3)",
-		data.name, data.age, data.phone)
+		&data.name, &data.age, &data.phone)
 	if err != nil {
 		return nil, err
 	}
@@ -101,16 +100,16 @@ func (*server) GetUser(ctx context.Context, req *pb.ReadUserRequest) (*pb.ReadUs
 
 func (*server) GetUsers(ctx context.Context, req *pb.ReadUserRequest) (*pb.ReadUsersResponse, error) {
 	fmt.Println("Read Users")
-	var users []*pb.User
+	users := []*pb.User{}
 	rows, err := DB.Query("select id,name,age,phone from users")
 	if err != nil {
 		return nil, err
 	}
 	for rows.Next() {
-		var user User
-		if err := rows.Scan(&user.ID, &user.name, &user.age, &user.phone); err != nil {
-			return nil, err
-		}
+		var user *pb.User = new(pb.User)
+		err := rows.Scan(&user.Id, &user.Name, &user.Age, &user.Phone)
+		log.Println(err)
+
 		users = append(users, user)
 	}
 	return &pb.ReadUsersResponse{

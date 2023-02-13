@@ -70,7 +70,11 @@ func main() {
 			})
 			return
 		}
-		data := &pb.User{}
+		data := &pb.User{
+			Name:  user.Name,
+			Age:   user.Age,
+			Phone: user.Phone,
+		}
 		res, err := client.CreateUser(ctx, &pb.CreateUserRequest{
 			User: data,
 		})
