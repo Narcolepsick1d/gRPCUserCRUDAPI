@@ -20,7 +20,7 @@ var DB *sql.DB
 var err error
 
 type User struct {
-	ID    int64 `gorm:"primarykey"`
+	ID    int64 
 	name  string
 	age   int64
 	phone string
